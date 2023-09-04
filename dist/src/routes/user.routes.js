@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const authValidator_1 = require("../middlewares/authValidator");
+const user_controller_1 = require("../controllers/user.controller");
+const schemaValidator_1 = require("../middlewares/schemaValidator");
+const user_schema_1 = require("../schemas/user.schema");
+const registerValidator_1 = require("../middlewares/registerValidator");
+const router = (0, express_1.Router)();
+router.get("/get", authValidator_1.authValidator, user_controller_1.getUsers);
+router.get("/get/:id", authValidator_1.authValidator, user_controller_1.getUser);
+router.post("/create", (0, schemaValidator_1.schemaValidator)(user_schema_1.createUserSchema), registerValidator_1.checkDuplicatedUsernameOrEmail, user_controller_1.createUser);
+router.put("/update/:id", authValidator_1.authValidator, (0, schemaValidator_1.schemaValidator)(user_schema_1.updateUserSchema), user_controller_1.updateUser);
+router.delete("/delete/:id", authValidator_1.authValidator, user_controller_1.deleteUser);
+exports.default = router;
