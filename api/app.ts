@@ -16,7 +16,7 @@ app.set("port", PORT || 3000);
 app.use(express.json());
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: [FRONTEND_URL, "http://localhost:5173"],
     credentials: true,
   })
 );

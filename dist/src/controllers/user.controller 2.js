@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUserPassword = exports.updateUser = exports.createUser = exports.getUserByEmail = exports.getUser = exports.getUsers = void 0;
+exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = void 0;
 const user_model_1 = __importDefault(require("../models/user.model"));
 const role_model_1 = __importDefault(require("../models/role.model"));
 const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,18 +44,6 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getUser = getUser;
-const getUserByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield user_model_1.default.findOne({ email: req.params.email }).select("name, username");
-        if (!user)
-            return res.status(400).json({ message: "Usuario no encontrado" });
-        res.status(200).json({ user });
-    }
-    catch (error) {
-        return res.status(500).json({ message: error });
-    }
-});
-exports.getUserByEmail = getUserByEmail;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = new user_model_1.default({
         name: req.body.name,
@@ -105,27 +93,6 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updateUser = updateUser;
-const updateUserPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = new user_model_1.default({
-            password: req.body.password,
-        });
-        const encryptPassword = yield user.encrypPassword(user.password);
-        const userFound = yield user_model_1.default.findOne({ _id: req.params.id });
-        if (!userFound)
-            return res.status(400).json({ message: "Usuario no encontrado" });
-        yield user_model_1.default.findByIdAndUpdate(userFound._id, {
-            password: encryptPassword,
-        });
-        return res
-            .status(200)
-            .json({ message: "Password actualizado correctamente!" });
-    }
-    catch (error) {
-        return res.status(500).json({ message: error });
-    }
-});
-exports.updateUserPassword = updateUserPassword;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userFound = yield user_model_1.default.findOne({ _id: req.params.id });

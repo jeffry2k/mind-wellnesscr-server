@@ -29,6 +29,19 @@ export const getUser = async (req: Request, res: Response) => {
   }
 };
 
+export const getUserByEmail = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }).select(
+      "name, username"
+    );
+    if (!user)
+      return res.status(400).json({ message: "Usuario no encontrado" });
+    res.status(200).json({ user });
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+};
+
 export const createUser = async (req: Request, res: Response) => {
   const user: IUser = new User({
     name: req.body.name,
@@ -71,6 +84,26 @@ export const updateUser = async (req: Request, res: Response) => {
     return res
       .status(200)
       .json({ message: "Usuario actualizado correctamente!" });
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+};
+
+export const updateUserPassword = async (req: Request, res: Response) => {
+  try {
+    const user: IUser = new User({
+      password: req.body.password,
+    });
+    const encryptPassword = await user.encrypPassword(user.password);
+    const userFound = await User.findOne({ _id: req.params.id });
+    if (!userFound)
+      return res.status(400).json({ message: "Usuario no encontrado" });
+    await User.findByIdAndUpdate(userFound._id, {
+      password: encryptPassword,
+    });
+    return res
+      .status(200)
+      .json({ message: "Password actualizado correctamente!" });
   } catch (error) {
     return res.status(500).json({ message: error });
   }
